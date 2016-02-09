@@ -2,7 +2,7 @@ Java Example
 ============
 
 This is a simple example showing how to access the
-[xmlstats](https://erikberg.com/api) API using Java.  Example program listings
+[xmlstats](https://erikberg.com/api) API using Java. Example program listings
 show two ways to create an HTTP request. One uses [Apache
 HttpComponents](https://hc.apache.org/) and the other uses
 [java.net](https://docs.oracle.com/javase/8/docs/api/java/net/package-summary.html)
@@ -18,18 +18,17 @@ Getting Started
 ---------------
 Clone the repository.
 
-### Edit Settings
-Specify your xmlstats API access token and user agent in `example.properties`.
-The user agent should follow guidelines listed at
-[https://erikberg.com/api#ua](https://erikberg.com/api#ua).
+### Configure
+Specify your API access token and e-mail address in
+`src/main/resources/xmlstats.properties`.
 
 ### Compile
 `mvn compile`
 
 ### Run
 Using Apache HttpComponents (recommended)
-`mvn exec:java -Dexec.mainClass=ExampleApacheHttp`
+`mvn exec:java -Dexec.mainClass=com.xmlstats.example.ExampleApacheHttp`
 
 Using java.net
-`mvn exec:java -Dexec.mainClass=ExampleJavaNet`
+`mvn exec:java -Dexec.mainClass=com.xmlstats.example.ExampleJavaNet`
 

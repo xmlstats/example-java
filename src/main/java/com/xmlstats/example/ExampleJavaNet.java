@@ -20,15 +20,19 @@ class ExampleJavaNet {
 
     static final String ACCESS_TOKEN = "access_token";
 
-    static final String USER_AGENT_NAME = "user_agent";
-
     static final String TIME_ZONE = "time_zone";
+
+    static final String USER_AGENT = "User-agent";
+
+    static final String USER_AGENT_CONTACT = "user_agent_contact";
+
+    static final String USER_AGENT_NAME = "xmlstats-javanet/%s (%s)";
+
+    static final String VERSION = "version";
 
     static final String AUTHORIZATION = "Authorization";
 
     static final String BEARER_AUTH_TOKEN = "Bearer %s";
-
-    static final String USER_AGENT = "User-agent";
 
     static final String ACCEPT_ENCODING = "Accept-encoding";
 
@@ -39,7 +43,9 @@ class ExampleJavaNet {
 
     public static void main(String[] args) {
         String accessToken = String.format(BEARER_AUTH_TOKEN, getPropertyValue(ACCESS_TOKEN));
-        String userAgent = getPropertyValue(USER_AGENT_NAME);
+        String userAgent = String.format(USER_AGENT_NAME,
+                getPropertyValue(VERSION),
+                getPropertyValue(USER_AGENT_CONTACT));
 
         InputStream in = null;
         try {
@@ -68,7 +74,7 @@ class ExampleJavaNet {
             } else {
                 // handle HTTP error
                 System.err.println("Server returned HTTP status: " + statusCode
-                        + " " + connection.getResponseMessage());
+                        + ". " + connection.getResponseMessage());
                 in = connection.getErrorStream();
                 if (in != null) {
                     String response = readHttpResponse(in, encoding);
@@ -117,7 +123,7 @@ class ExampleJavaNet {
             ZonedDateTime date = ZonedDateTime.parse(events.getEventsDate());
             DateTimeFormatter full = DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy");
             System.out.printf("Events on %s%n%n", date.format(full));
-            System.out.printf("%-35s %5s %34s%n", "Time", "Event", "Status");
+            System.out.printf("%-36s %5s %33s%n", "Time", "Event", "Status");
 
             // Set the time zone for output
             String timeZone = getPropertyValue(TIME_ZONE);
@@ -140,10 +146,9 @@ class ExampleJavaNet {
     static String getPropertyValue(String key) {
         String value = null;
         try {
-            ResourceBundle resourceBundle = ResourceBundle.getBundle("example");
+            ResourceBundle resourceBundle = ResourceBundle.getBundle("xmlstats");
             value = resourceBundle.getString(key);
         } catch (MissingResourceException ex) {
-            System.err.println("Error loading properties file.");
             ex.printStackTrace();
             System.exit(1);
         }

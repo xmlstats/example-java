@@ -31,9 +31,13 @@ class ExampleApacheHttp {
 
     static final String ACCESS_TOKEN = "access_token";
 
-    static final String USER_AGENT_NAME = "user_agent";
+    static final String USER_AGENT_CONTACT = "user_agent_contact";
+
+    static final String USER_AGENT = "xmlstats-javahc/%s (%s)";
 
     static final String TIME_ZONE = "time_zone";
+
+    static final String VERSION = "version";
 
     static final String AUTHORIZATION = "Authorization";
 
@@ -47,9 +51,10 @@ class ExampleApacheHttp {
     static final String REQUEST_URL = "https://erikberg.com/events.json?sport=nba&date=20130414";
 
     public static void main(String[] args) {
-        ResponseHandler<Events> responseHandler = new HttpResponseHandler<>(Events.class);
         String accessToken = String.format(BEARER_AUTH_TOKEN, getPropertyValue(ACCESS_TOKEN));
-        String userAgent = getPropertyValue(USER_AGENT_NAME);
+        String userAgent = String.format(USER_AGENT, getPropertyValue(VERSION),
+                getPropertyValue(USER_AGENT_CONTACT));
+        ResponseHandler<Events> responseHandler = new HttpResponseHandler<>(Events.class);
         try (CloseableHttpClient httpClient = HttpClientBuilder
                 .create()
                 .setUserAgent(userAgent)
@@ -61,7 +66,7 @@ class ExampleApacheHttp {
             printResult(events);
         } catch (HttpResponseException ex) {
             System.err.println("Server returned HTTP status: " + ex.getStatusCode()
-                    + " " + ex.getMessage());
+                    + ". " + ex.getMessage());
         } catch (JsonParseException | JsonMappingException ex) {
             System.err.println("Error parsing json at line: " + ex.getLocation().getLineNr()
                     + ", column: " + ex.getLocation().getColumnNr());
@@ -99,7 +104,7 @@ class ExampleApacheHttp {
     static String getPropertyValue(String key) {
         String value = null;
         try {
-            ResourceBundle resourceBundle = ResourceBundle.getBundle("example");
+            ResourceBundle resourceBundle = ResourceBundle.getBundle("xmlstats");
             value = resourceBundle.getString(key);
         } catch (MissingResourceException ex) {
             ex.printStackTrace();
