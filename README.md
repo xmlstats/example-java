@@ -27,8 +27,12 @@ Specify your API access token and e-mail address in
 
 ### Run
 Using Apache HttpComponents (recommended)
-`mvn exec:java -Dexec.mainClass=com.xmlstats.example.ExampleApacheHttp`
+```
+mvn exec:java -Dexec.mainClass=com.xmlstats.example.ExampleApacheHttp
+```
 
 Using java.net
-`mvn exec:java -Dexec.mainClass=com.xmlstats.example.ExampleJavaNet`
+```
+mvn exec:java -Dexec.mainClass=com.xmlstats.example.ExampleJavaNet`
+```
 
