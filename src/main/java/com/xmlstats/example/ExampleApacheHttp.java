@@ -13,6 +13,7 @@ import java.util.ResourceBundle;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.apache.http.StatusLine;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.ResponseHandler;
@@ -123,6 +124,7 @@ class ExampleApacheHttp {
 
         public T handleResponse(HttpResponse response) throws ClientProtocolException, IOException {
             ObjectMapper mapper = new ObjectMapper();
+            StatusLine status = response.getStatusLine();
             HttpEntity entity = response.getEntity();
             if (entity == null) {
                 throw new ClientProtocolException("Response is empty.");
@@ -132,11 +134,17 @@ class ExampleApacheHttp {
                 response.setEntity(new GzipDecompressingEntity(response.getEntity()));
             }
             BufferedReader br = new BufferedReader(new InputStreamReader(entity.getContent(), "UTF-8"));
-            int statusCode = response.getStatusLine().getStatusCode();
+            int statusCode = status.getStatusCode();
             if (statusCode != HttpStatus.SC_OK) {
-                mapper.enable(DeserializationFeature.UNWRAP_ROOT_VALUE);
-                XmlstatsError error = mapper.readValue(br, XmlstatsError.class);
-                throw new HttpResponseException(statusCode, error.getDescription());
+                // If there is an error and the response is json, it will be an XmlstatsError
+                // https://erikberg.com/api/objects/xmlstats-error
+                if ("application/json".equals(entity.getContentType().getValue())) {
+                    mapper.enable(DeserializationFeature.UNWRAP_ROOT_VALUE);
+                    XmlstatsError error = mapper.readValue(br, XmlstatsError.class);
+                    throw new HttpResponseException(statusCode, error.getDescription());
+                } else {
+                    throw new HttpResponseException(statusCode, status.getReasonPhrase());
+                }
             }
             return mapper.readValue(br, clazz);
         }
