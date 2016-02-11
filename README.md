@@ -33,6 +33,6 @@ mvn exec:java -Dexec.mainClass=com.xmlstats.example.ExampleApacheHttp
 
 Using java.net
 ```
-mvn exec:java -Dexec.mainClass=com.xmlstats.example.ExampleJavaNet`
+mvn exec:java -Dexec.mainClass=com.xmlstats.example.ExampleJavaNet
 ```
 
