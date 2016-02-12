@@ -129,24 +129,25 @@ class ExampleApacheHttp {
             if (entity == null) {
                 throw new ClientProtocolException("Response is empty.");
             }
+
             // Decompress response if it is compressed
             if (GZIP.equals(entity.getContentEncoding())) {
                 response.setEntity(new GzipDecompressingEntity(response.getEntity()));
             }
-            BufferedReader br = new BufferedReader(new InputStreamReader(entity.getContent(), "UTF-8"));
+
             int statusCode = status.getStatusCode();
             if (statusCode != HttpStatus.SC_OK) {
-                // If there is an error and the response is json, it will be an XmlstatsError
-                // https://erikberg.com/api/objects/xmlstats-error
+                // If there is an error and the content type is json, it will be an
+                // XmlstatsError. See https://erikberg.com/api/objects/xmlstats-error
                 if ("application/json".equals(entity.getContentType().getValue())) {
                     mapper.enable(DeserializationFeature.UNWRAP_ROOT_VALUE);
-                    XmlstatsError error = mapper.readValue(br, XmlstatsError.class);
+                    XmlstatsError error = mapper.readValue(entity.getContent(), XmlstatsError.class);
                     throw new HttpResponseException(statusCode, error.getDescription());
                 } else {
                     throw new HttpResponseException(statusCode, status.getReasonPhrase());
                 }
             }
-            return mapper.readValue(br, clazz);
+            return mapper.readValue(entity.getContent(), clazz);
         }
     }
 
