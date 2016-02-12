@@ -135,15 +135,15 @@ class ExampleApacheHttp {
 
             int statusCode = status.getStatusCode();
             if (statusCode != HttpStatus.SC_OK) {
+                String reason = status.getReasonPhrase();
                 // If there is an error and the content type is json, it will be an
                 // XmlstatsError. See https://erikberg.com/api/objects/xmlstats-error
                 if ("application/json".equals(entity.getContentType().getValue())) {
                     mapper.enable(DeserializationFeature.UNWRAP_ROOT_VALUE);
                     XmlstatsError error = mapper.readValue(entity.getContent(), XmlstatsError.class);
-                    throw new HttpResponseException(statusCode, error.getDescription());
-                } else {
-                    throw new HttpResponseException(statusCode, status.getReasonPhrase());
+                    reason = error.getDescription();
                 }
+                throw new HttpResponseException(statusCode, reason);
             }
             return mapper.readValue(entity.getContent(), clazz);
         }
