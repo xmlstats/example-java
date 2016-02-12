@@ -1,7 +1,7 @@
 Java Example
 ============
 
-This is a simple example showing how to access the
+This is a simple example that accesses the
 [xmlstats](https://erikberg.com/api) API using Java. Example program listings
 show two ways to create an HTTP request. One uses [Apache
 HttpComponents](https://hc.apache.org/) and the other uses
@@ -23,7 +23,9 @@ Specify your API access token and e-mail address in
 `src/main/resources/xmlstats.properties`.
 
 ### Compile
-`mvn compile`
+```
+mvn compile
+```
 
 ### Run
 Using Apache HttpComponents (recommended)
