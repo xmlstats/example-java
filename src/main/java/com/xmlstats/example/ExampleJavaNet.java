@@ -1,9 +1,7 @@
 package com.xmlstats.example;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.time.ZoneId;
@@ -47,7 +45,6 @@ class ExampleJavaNet {
                 getPropertyValue(VERSION),
                 getPropertyValue(USER_AGENT_CONTACT));
 
-        InputStream in = null;
         try {
             URL url = new URL(REQUEST_URL);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -61,64 +58,36 @@ class ExampleJavaNet {
             // Check the HTTP status code for "200 OK"
             int statusCode = connection.getResponseCode();
             String encoding = connection.getContentEncoding();
-            if (statusCode == HttpURLConnection.HTTP_OK) {
-                in = connection.getInputStream();
-                if (in != null) {
-                    // read in http response
-                    String response = readHttpResponse(in, encoding);
-                    if (response != null) {
-                        // Have the data we want, now call function to parse it
-                        printResult(response);
-                    }
-                }
-            } else {
-                // handle HTTP error
+            if (statusCode != HttpURLConnection.HTTP_OK) {
                 System.err.println("Server returned HTTP status: " + statusCode
                         + ". " + connection.getResponseMessage());
-                in = connection.getErrorStream();
-                if (in != null) {
-                    String response = readHttpResponse(in, encoding);
-                    System.err.println(response);
-                }
                 System.exit(1);
             }
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-    }
 
-    static String readHttpResponse(InputStream in, String encoding) {
-        StringBuilder sb = new StringBuilder();
-        // Verify the response is compressed, before attempting to decompress it
-        try {
+            InputStream in = connection.getInputStream();
+            // Ensure there is data
+            if (in == null) {
+                System.err.println("Response is empty.");
+                System.exit(1);
+            }
+
+            // Decompress response if it is compressed
             if (GZIP.equals(encoding)) {
                 in = new GZIPInputStream(in);
             }
-        } catch (IOException ex) {
-            System.err.println("Error trying to read gzip data.");
-            ex.printStackTrace();
-            System.exit(1);
-        }
 
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(in))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                sb.append(line);
-            }
+            printResult(in);
         } catch (IOException ex) {
-            System.err.println("Error reading response.");
             ex.printStackTrace();
-            System.exit(1);
         }
-        return sb.toString();
     }
 
-    static void printResult(String data) {
+    static void printResult(InputStream in) {
         try {
-            // These two lines of code take the JSON string and return a POJO. In
+            // These two lines of code take the input stream and return a POJO. In
             // this case, an Events object (https://erikberg.com/api/methods/events)
             ObjectMapper mapper = new ObjectMapper();
-            Events events = mapper.readValue(data, Events.class);
+            Events events = mapper.readValue(in, Events.class);
 
             ZonedDateTime date = ZonedDateTime.parse(events.getEventsDate());
             DateTimeFormatter full = DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy");
@@ -133,10 +102,10 @@ class ExampleJavaNet {
             for (Event evt : events.getEventList()) {
                 date = ZonedDateTime.parse(evt.getStartDateTime());
                 System.out.printf("%12s %24s vs. %-24s %9s%n",
-                    date.format(sdf),
-                    evt.getAwayTeam().getFullName(),
-                    evt.getHomeTeam().getFullName(),
-                    evt.getEventStatus());
+                        date.format(sdf),
+                        evt.getAwayTeam().getFullName(),
+                        evt.getHomeTeam().getFullName(),
+                        evt.getEventStatus());
             }
         } catch (IOException | DateTimeParseException ex) {
             System.err.println("Could not parse JSON data: " + ex.getMessage());
