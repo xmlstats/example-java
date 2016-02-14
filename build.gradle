@@ -5,6 +5,7 @@ version = "1.0"
 sourceCompatibility = 1.8
 
 ext {
+    jacksonVersion = "2.6.4"
 }
 
 repositories {
@@ -12,7 +13,6 @@ repositories {
 }
 
 dependencies {
-    ext.jacksonVersion = "2.6.4"
     compile "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
     compile "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
     compile "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion"
