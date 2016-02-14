@@ -11,8 +11,8 @@ into a POJO using [Jackson](https://github.com/FasterXML/jackson).
 
 Requirements
 ------------
-To run this example, you will need JDK 8, [Maven](https://maven.apache.org/)
-3.x, and an xmlstats account.
+To run this example, you will need JDK 8, either [Maven](https://maven.apache.org/)
+or [Gradle](https://gradle.org/), and an xmlstats account.
 
 Getting Started
 ---------------
@@ -26,15 +26,26 @@ Specify your API access token and e-mail address in
 ```
 mvn compile
 ```
+or
+```
+gradle build
+```
 
 ### Run
-Using Apache HttpComponents (recommended)
+##### Using Apache HttpComponents (recommended)
 ```
 mvn exec:java -Dexec.mainClass=com.xmlstats.example.ExampleApacheHttp
 ```
+or
+```
+gradle run -PmainClass=com.xmlstats.example.ExampleApacheHttp
+```
 
-Using java.net
+##### Using java.net
 ```
 mvn exec:java -Dexec.mainClass=com.xmlstats.example.ExampleJavaNet
 ```
-
+or
+```
+gradle run -PmainClass=com.xmlstats.example.ExampleJavaNet
+```
