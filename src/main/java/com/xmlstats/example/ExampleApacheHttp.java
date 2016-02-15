@@ -53,7 +53,7 @@ class ExampleApacheHttp {
         String accessToken = String.format(BEARER_AUTH_TOKEN, getPropertyValue(ACCESS_TOKEN));
         String userAgent = String.format(USER_AGENT, getPropertyValue(VERSION),
                 getPropertyValue(USER_AGENT_CONTACT));
-        ResponseHandler<Events> responseHandler = new HttpResponseHandler<>(Events.class);
+
         try (CloseableHttpClient httpClient = HttpClientBuilder
                 .create()
                 .setUserAgent(userAgent)
@@ -61,14 +61,16 @@ class ExampleApacheHttp {
             HttpUriRequest request = new HttpGet(REQUEST_URL);
             request.addHeader(AUTHORIZATION, accessToken);
             request.addHeader(ACCEPT_ENCODING, GZIP);
+            // Response handler deserializes json to Events POJO
+            ResponseHandler<Events> responseHandler = new HttpResponseHandler<>(Events.class);
             Events events = httpClient.execute(request, responseHandler);
             printResult(events);
         } catch (HttpResponseException ex) {
-            System.err.println("Server returned HTTP status: " + ex.getStatusCode()
-                    + ". " + ex.getMessage());
+            System.err.printf("Server returned HTTP status: %s. %s%n",
+                    ex.getStatusCode(), ex.getMessage());
         } catch (JsonParseException | JsonMappingException ex) {
-            System.err.println("Error parsing json at line: " + ex.getLocation().getLineNr()
-                    + ", column: " + ex.getLocation().getColumnNr());
+            System.err.printf("Error parsing json at line: %s. column: %s%n",
+                    ex.getLocation().getLineNr(), ex.getLocation().getColumnNr());
             ex.printStackTrace();
         } catch (IOException ex) {
             System.err.println(ex.getMessage());

@@ -59,8 +59,8 @@ class ExampleJavaNet {
             int statusCode = connection.getResponseCode();
             String encoding = connection.getContentEncoding();
             if (statusCode != HttpURLConnection.HTTP_OK) {
-                System.err.println("Server returned HTTP status: " + statusCode
-                        + ". " + connection.getResponseMessage());
+                System.err.printf("Server returned HTTP status: %s. %s%n%n",
+                        statusCode, connection.getResponseMessage());
                 System.exit(1);
             }
 
