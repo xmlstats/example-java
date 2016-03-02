@@ -24,7 +24,7 @@ class ExampleJavaNet {
 
     static final String USER_AGENT_CONTACT = "user_agent_contact";
 
-    static final String USER_AGENT_NAME = "xmlstats-javanet/%s (%s)";
+    static final String USER_AGENT_NAME = "xmlstats-exjavanet/%s (%s)";
 
     static final String VERSION = "version";
 

@@ -32,7 +32,7 @@ class ExampleApacheHttp {
 
     static final String USER_AGENT_CONTACT = "user_agent_contact";
 
-    static final String USER_AGENT = "xmlstats-javahc/%s (%s)";
+    static final String USER_AGENT = "xmlstats-exjavahc/%s (%s)";
 
     static final String TIME_ZONE = "time_zone";
 
